@@ -82,6 +82,7 @@ Groove Armada
 Justice
 The Crystal Method
 Chase & Status
+Sub Focus
 
 # ------------------------------------------------------------
 #  ELECTRO-POP / ALT-POP  (Sia lane)
@@ -94,6 +95,7 @@ Aurora
 London Grammar
 Robyn
 Ellie Goulding
+Michelle Branch
 
 # ------------------------------------------------------------
 #  INDUSTRIAL / ELECTRONIC-ROCK  (bridges Prodigy + Linkin Park)
