@@ -1,0 +1,104 @@
+# Jenna's UK Gig Tracker — artists to track
+# One artist per line. Lines starting with # are ignored.
+# Edit freely: add, remove, reorder. A push re-runs the tracker automatically.
+#
+# Names kept "search-friendly" so Ticketmaster matches them cleanly.
+
+# ============================================================
+#  JENNA'S CORE
+# ============================================================
+The Offspring
+Linkin Park
+The Pretty Reckless
+The Prodigy
+Evanescence
+Blink-182
+The Chemical Brothers
+Sia
+
+
+# ████████████████████████████████████████████████████████████
+#  SUGGESTED — SIMILAR ARTISTS (added by Claude)
+#  Same lanes as your core. Prune anything you don't fancy.
+#  The tracker auto-skips any it can't match on Ticketmaster.
+# ████████████████████████████████████████████████████████████
+
+# ------------------------------------------------------------
+#  POP-PUNK / PUNK ROCK  (Offspring / Blink-182 lane)
+# ------------------------------------------------------------
+Green Day
+Sum 41
+Rise Against
+Bad Religion
+Rancid
+Yellowcard
+New Found Glory
+Simple Plan
+All Time Low
+Jimmy Eat World
+A Day to Remember
+Pennywise
+
+# ------------------------------------------------------------
+#  NU-METAL / ALT-METAL  (Linkin Park lane)
+# ------------------------------------------------------------
+Korn
+Limp Bizkit
+Deftones
+System of a Down
+Papa Roach
+Disturbed
+Slipknot
+Three Days Grace
+Breaking Benjamin
+Bring Me the Horizon
+Bullet for My Valentine
+Wage War
+
+# ------------------------------------------------------------
+#  FEMALE-FRONTED ALT / HARD ROCK  (Evanescence / Pretty Reckless lane)
+# ------------------------------------------------------------
+Within Temptation
+Nightwish
+Halestorm
+Paramore
+Lacuna Coil
+Garbage
+Skunk Anansie
+In This Moment
+Spiritbox
+Wolf Alice
+
+# ------------------------------------------------------------
+#  BIG BEAT / RAVE / ELECTRONIC  (Prodigy / Chemical Brothers lane)
+# ------------------------------------------------------------
+Fatboy Slim
+Underworld
+Pendulum
+Orbital
+Leftfield
+Basement Jaxx
+Groove Armada
+Justice
+The Crystal Method
+Chase & Status
+
+# ------------------------------------------------------------
+#  ELECTRO-POP / ALT-POP  (Sia lane)
+# ------------------------------------------------------------
+Florence + The Machine
+CHVRCHES
+Lorde
+Marina
+Aurora
+London Grammar
+Robyn
+Ellie Goulding
+
+# ------------------------------------------------------------
+#  INDUSTRIAL / ELECTRONIC-ROCK  (bridges Prodigy + Linkin Park)
+# ------------------------------------------------------------
+Nine Inch Nails
+Rammstein
+Marilyn Manson
+Gary Numan
