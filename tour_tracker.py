@@ -119,24 +119,35 @@ def load_cache():
 # --------------------------------------------------------------------------- #
 # Ticketmaster API
 # --------------------------------------------------------------------------- #
+class QuotaExceeded(Exception):
+    """Daily Ticketmaster quota spent — stop scanning and keep last-good data."""
+
+
 def tm_get(path, key, **params):
     params["apikey"] = key
     url = f"{API_BASE}/{path}"
-    for attempt in range(3):
+    backoff = 2
+    for attempt in range(6):  # exponential backoff so transient 429s don't drop data
         try:
             r = requests.get(url, params=params, timeout=20)
         except requests.RequestException as e:
-            print(f"    network error: {e}; retrying...")
-            time.sleep(2)
+            print(f"    network error: {e}; retrying in {backoff}s...")
+            time.sleep(backoff)
+            backoff = min(backoff * 2, 20)
             continue
         if r.status_code == 429:  # rate limited
-            print("    rate limited; pausing 3s...")
-            time.sleep(3)
+            # Daily quota exhausted -> no point retrying; bail fast and keep last-good.
+            if "QuotaViolation" in (r.text or "") or r.headers.get("Rate-Limit-Available") == "0":
+                raise QuotaExceeded("daily Ticketmaster quota (5000/day) exhausted")
+            print(f"    rate limited (per-second); backing off {backoff}s...")
+            time.sleep(backoff)
+            backoff = min(backoff * 2, 20)
             continue
         if r.status_code != 200:
             print(f"    API returned {r.status_code} for {path}")
             return None
         return r.json()
+    print(f"    gave up on {path} after repeated rate-limiting")
     return None
 
 
@@ -677,19 +688,22 @@ def main():
 
     print(f"Tracking {len(artists)} artists (scope: {scope})...\n")
     all_events = []
-    for name in artists:
-        print(f"  {name}")
-        attraction_id, matched = resolve_attraction_id(name, key)
-        if not attraction_id:
-            print("    no music match found, skipping")
-            continue
-        if matched.lower() != name.lower():
-            print(f"    matched to '{matched}'")
-        evs = fetch_events(attraction_id, key, scope)
-        print(f"    {len(evs)} show(s)")
-        for ev in evs:
-            all_events.append(build_event_record(name, ev))
-        time.sleep(0.25)  # be gentle on rate limits
+    try:
+        for name in artists:
+            print(f"  {name}")
+            attraction_id, matched = resolve_attraction_id(name, key)
+            if not attraction_id:
+                print("    no music match found, skipping")
+                continue
+            if matched.lower() != name.lower():
+                print(f"    matched to '{matched}'")
+            evs = fetch_events(attraction_id, key, scope)
+            print(f"    {len(evs)} show(s)")
+            for ev in evs:
+                all_events.append(build_event_record(name, ev))
+            time.sleep(0.5)  # be gentle on the per-second rate limit
+    except QuotaExceeded as e:
+        print(f"\nStopping early: {e}. Keeping last-good data instead of publishing a thin dashboard.")
 
     # Dedupe by event id
     seen = {}
@@ -697,6 +711,17 @@ def main():
         if e["id"] and e["id"] not in seen:
             seen[e["id"]] = e
     events = list(seen.values())
+
+    # Safeguard: if this run collected far fewer events than last time, it was
+    # almost certainly rate-limited. Keep the previous good data rather than
+    # publishing a thin dashboard.
+    prev_events = prev_cache.get("events", [])
+    if len(prev_events) >= 20 and len(events) < 0.6 * len(prev_events):
+        print(f"WARNING: only {len(events)} events vs {len(prev_events)} cached "
+              f"-> likely rate-limited; keeping previous data, not overwriting.")
+        events = prev_events
+        for e in events:
+            e.pop("_is_new", None)
 
     # Flag new
     n_new = 0
